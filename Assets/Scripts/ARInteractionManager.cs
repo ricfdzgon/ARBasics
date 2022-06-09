@@ -105,6 +105,11 @@ public class ARInteractionManager : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
+            if (currentObject == null)
+            {
+                currentObject = hit.collider.gameObject;
+                pointer.SetActive(true);
+            }
             return true;
         }
 
@@ -144,6 +149,7 @@ public class ARInteractionManager : MonoBehaviour
         if (currentObject)
         {
             Destroy(currentObject);
+            pointer.SetActive(false);
         }
     }
 }
