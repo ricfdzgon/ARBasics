@@ -885,6 +885,7 @@ MonoBehaviour:
   debugText: {fileID: 381340971}
   objectPrefab: {fileID: 1772707393555398769, guid: 6321152be9faab04f8b0ac97eaf6e16b, type: 3}
   pointer: {fileID: 487884104260997777, guid: 3cf7ecce1c4425842bf0e97e16fc8fdb, type: 3}
+  myCamera: {fileID: 658014511}
   raycastManager: {fileID: 113878750}
 --- !u!1 &1617340004
 GameObject:

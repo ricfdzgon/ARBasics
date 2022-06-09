@@ -10,12 +10,15 @@ public class ARInteractionManager : MonoBehaviour
     public Text debugText;
     public GameObject objectPrefab;
     public GameObject pointer;
+    public Camera myCamera;
 
     public ARRaycastManager raycastManager;
     private List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
     private GameObject currentObject;
     private bool isInitialPosition;
+    private bool isOverCurrentObject;
+    private bool isOverUI;
 
     public GameObject CurrentObject
     {
@@ -56,8 +59,36 @@ public class ARInteractionManager : MonoBehaviour
             if (touchOne.phase == TouchPhase.Began)
             {
                 debugText.text = debugText.text + " | " + "Toque en " + touchOne.position;
+                isOverCurrentObject = IsOverCurrentObject(touchOne.position);
+                isOverUI = IsOverUI(touchOne.position);
+            }
+
+            if (touchOne.phase == TouchPhase.Moved && isOverCurrentObject && !isOverUI)
+            {
+                raycastManager.Raycast(touchOne.position, hits, TrackableType.FeaturePoint);
+                if (hits.Count > 0)
+                {
+                    transform.position = hits[0].pose.position;
+                }
             }
         }
+    }
+
+    public bool IsOverCurrentObject(Vector2 position)
+    {
+        Ray ray = myCamera.ScreenPointToRay(position);
+
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool IsOverUI(Vector2 touchPosition)
+    {
+        return false;
     }
 
     public void GreenButtonOnClick()
