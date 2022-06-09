@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using UnityEngine.EventSystems;
 
 public class ARInteractionManager : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class ARInteractionManager : MonoBehaviour
     private bool isInitialPosition;
     private bool isOverCurrentObject;
     private bool isOverUI;
+
+    private Vector2 initialTouchPose;
 
     public GameObject CurrentObject
     {
@@ -72,6 +75,28 @@ public class ARInteractionManager : MonoBehaviour
                 }
             }
         }
+
+        if (Input.touchCount == 2)
+        {
+            Touch touchOne = Input.GetTouch(0);
+            Touch touchTwo = Input.GetTouch(1);
+
+            if (touchOne.phase == TouchPhase.Began || touchTwo.phase == TouchPhase.Began)
+            {
+                initialTouchPose = touchTwo.position - touchOne.position;
+            }
+
+            if (touchOne.phase == TouchPhase.Moved || touchTwo.phase == TouchPhase.Moved)
+            {
+                Vector2 currentTouchPose = touchTwo.position - touchOne.position;
+                float angle = Vector2.SignedAngle(initialTouchPose, currentTouchPose);
+                if (currentObject)
+                {
+                    currentObject.transform.Rotate(Vector3.up, angle);
+                }
+                initialTouchPose = currentTouchPose;
+            }
+        }
     }
 
     public bool IsOverCurrentObject(Vector2 position)
@@ -88,7 +113,12 @@ public class ARInteractionManager : MonoBehaviour
 
     public bool IsOverUI(Vector2 touchPosition)
     {
-        return false;
+        PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
+        pointerEventData.position = new Vector2(touchPosition.x, touchPosition.y);
+        List<RaycastResult> result = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerEventData, result);
+
+        return result.Count > 0;
     }
 
     public void GreenButtonOnClick()
