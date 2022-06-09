@@ -101,4 +101,19 @@ public class ARInteractionManager : MonoBehaviour
     {
         debugText.text = "";
     }
+
+    public void BlueButtonOnClick()
+    {
+        currentObject.transform.parent = null;
+        currentObject = null;
+        pointer.SetActive(false);
+    }
+
+    public void RedButtonOnClick()
+    {
+        if (currentObject)
+        {
+            Destroy(currentObject);
+        }
+    }
 }
